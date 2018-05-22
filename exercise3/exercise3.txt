@@ -1,0 +1,23 @@
+Exercise 3 - Impersonating a User
+=================================
+
+For reasons that will become clear later, we would like to be able to post an
+entry on someone else's blog (perhaps a senior managers or the system 
+administrator's).
+
+We actually found earlier that we can display user passwords, because Mutillidae
+is so insecure that it keeps them in cleartext in the database!  However let's 
+ignore that for now - there might be good reasons for not wanting to log into 
+the site as a user as it might alert people to our devious activities.
+
+1. Log into the site using your user account and navigate to the "Add to Your
+   Blog" page.  Enter a new blog post.
+
+2. Switch on interception in BurpSuite and load the page again.  Inspect the
+   headers.  Can you impersonate a user without logging in as them?  
+   (Hint: you'll need some information from the "accounts" table we extracted
+    in Exercise 1)
+
+3. Once you've managed to send a request as a different user, create an entry
+   on "tim"s blog.
+

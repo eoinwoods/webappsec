@@ -1,0 +1,23 @@
+Exercise 2 Solutions
+=====================
+
+1. As you may have discovered the DNS Lookup page is shockingly insecure
+   because it blindly passes the field content to the operating system to
+   execute.
+
+   Enter "abc ; pwd" into the hostname field and you'll see that nslookup
+   runs but so does the "pwd" command.  You can now get easy access to the
+   operating system prompt.
+
+
+2. Again this is not very difficult, the File Upload page will upload anything,
+   and doesn't validate files for size or content.  Try uploading our little PHP
+   file and it will end up in /tmp.
+
+   If you use the URL http://...../index.php?page=/tmp/print-date.php then you'll
+   find that the site blindly executes that PHP snippet.
+
+   Worse still, if you intercept the inbound request you'll find a parameter called
+   UPLOAD_DIRECTORY which you can change in BurpSuite.  If you use /var/mutillidae
+   for this parameter then the page will end up in the document root of the site.
+   

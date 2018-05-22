@@ -1,0 +1,41 @@
+Exercise 1 - Scouting the System
+=================================
+
+1. Set up Mutillidae and BurpSuite and check that your browser is sending
+   requests to the server via BurpSuite.  Intercept some traffic in BurpSuite's
+   "Proxy" tab and review your request history.
+
+2. Let's start with a very simple SQL injection attack:
+   - Navigate to the "User Info" page
+   - Register for a new account
+   - Navigate back to the page and enter your username and password to 
+     view your account details
+   - Use SQL injection on this page to view all of the accounts, not just yours
+
+
+3. Now we'd like to extend our use of this vulnerability to get some more 
+   information than the previous attack.  It would be very useful to us to
+   know the user IDs of all of the users.  We can use this later in another
+   attack.  Can you extend the SQL injection attack here to display more
+   data from the table.  (Hints: the table is "accounts", it has 7 columns
+   and one of the columns is called "cid")
+
+4. Changing tack slightly, it would be useful to be able to read some files
+   from the operating system.  Navigate to the Text File Viewer page.  Try
+   viewing one of the files from the drop down list.
+
+   Now can you use this page to view other files?  It seems to be pulling
+   files from textfiles.com  Can it be used to read other URLs?  Can it be 
+   used to access files on the host file system?  
+   (Hint: several ways of doing this, but you might need to use more than 
+          the web browser to achieve this)
+
+
+So at the end of this exercise we have:
+ * Learned how to perform SQL injection and found a workable attack vector
+ * Found out how to extract all of the information we need from the user
+   accounts table
+ * Learned how to access Internet URLs anonymously
+ * Learned how to read files on the web server host file system
+
+ 

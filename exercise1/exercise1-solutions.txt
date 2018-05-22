@@ -1,0 +1,71 @@
+Exercise 1 Solutions
+====================
+
+1. A few hints to get this working:
+
+  * The easiest networking mode to choose is "Host network" BUT this doesn't
+    allow the server to access the Internet (or any machines not on the 
+    local machine).  If this is a problem then "Bridged Networking" is
+    probably the easiest to use.
+
+  * In BurpSuite, select "Proxy" on the top tab row and then "Options" on
+    the lower tab row.  You need a proxy on 127.0.0.1 and a free port
+    (we have used 9000 when developing the exercises).  Select the 
+    "Running" check box to enable the proxy
+
+  * If you select the "Intercept" tab, then the "Intercept is on" /
+    "Intercept is off" button controls whether requests are stopped to
+    allow you to tamper with them, or just logged (and viewable in
+    the "HTTP History" tab).
+
+  * To intercept a response, set "Intercept is on" and then when the
+    corresponding request arrives, click on "Action" and select
+    "Do Intercept" --> "The response to this request" in the popup menu.
+
+  * The "Repeater" tab is also worth investigating.  One of the entries
+    on the "Action" menu is to "Send to Repeater" and the request will
+    then appear in the Repeater screen.  You can now resend this request
+    as often as you would like to by pressing "Go" and change the request
+    any way you want to each time.
+
+ 2. This is a very simple injection attack.  Just enter the following text
+    into the username field: ' or 1=1 -- 
+
+    Note that you need a space at the end after the "--" to make this work.
+
+    To see what effect your injection would have on the SQL, just enter
+    a single quote in the username field and the application obligingly
+    displays the resulting SQL!  (Most applications aren't so helpful!)
+
+ 3. The first hint here is to use a UNION statement so that the legitimate
+    SQL runs as normal but the result set contains the results of our
+    UNION'ed SELECT statement too.  
+
+    This is why the number of columns is important.  The result set of
+    your malicious query needs to match the structure of the result set
+    of the legitimate query.
+
+    The text to enter is something like:
+
+       ' UNION SELECT null, concat(cid, ' ', username, ' ', password), null,
+       null, null, null, null from accounts -- 
+
+    (Why do we put our CONCAT function in the second column not the first?)
+
+    We now have a username / UID mapping, which might be useful later.
+
+4.  The main hint here is to use BurpSuite.  Switch on interception in the
+    proxy and have a look at the parameters passed in the request.
+
+    There is a parameter called "textfile" containing a URL from the pick
+    list (which happens to be a file at textfiles.com).  You'll find that
+    you can put any URL in this parameter and the web server will
+    obligingly got and fetch it for you, effectively acting as a primitive
+    anonymiser.
+
+    More interestingly still, the "textfile" parameter doesn't appear to be
+    validated at all ... it will accept file paths and due to the libraries
+    the server side code is using, it will read files from the web server
+    host and display them!
+
+

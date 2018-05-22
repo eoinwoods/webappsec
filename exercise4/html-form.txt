@@ -1,0 +1,11 @@
+	<div id="revalidate" style="padding:20px; position: absolute; top: 250px; left: 400px; background-color:#ccccff; border: solid black 1px; border-radius:15px;">	
+		<form>
+			<table style="font-weight:bold;">
+				<tr><td colspan="2" style="font-size:20px;">Login Timeout - Please revalidate your credentials</td></tr>
+				<tr><td colspan="2">&nbsp;</td></tr>
+				<tr><td>Username</td><td><input name="username" type="text"></td></tr>
+				<tr><td>Password</td><td><input name="password" type="password"></td></tr>
+				<tr><td colspan="2" style="text-align:center;"><input type="button" onclick="javascript:alert(this.form.username.value + ' ' + this.form.password.value);" value="Submit"></td></tr>
+			</table>
+		</form>
+	</div>

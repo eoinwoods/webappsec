@@ -1,0 +1,99 @@
+Exercise 4 - Stealing Login Details
+===================================
+
+This exercise is rather more involved than the previous ones and illustrates the 
+process of combining a number of vulnerabilities in order to mount an attack.
+
+In this exercise we are going to fool a user into providing us with their
+username and password and then saving these by silently POSTing them to 
+a special page that saves them away for us.  (Normally this would be a site
+the attacker sets up elsewhere but Mutillidae usefully provides such a page
+so we'll use that).
+
+The strategy we're going to use for this attack is to create a credible looking
+HTML form that looks like a login box and an associated JavaScript function
+that can process the form and POST the credentials in it to a URL.  Then,
+we will plant this form as a hidden part of a blog post in someone else's 
+blog, hoping to trap unwary users into running it.
+
+1. Create an HTML fragment that is a FORM with username and password fields
+   and some sort of message inviting the user to log in again.  Add a 
+   submit button that calls a JavaScript function (just call javascript:alert() 
+   initially).  Wrap the form in a DIV with absolute positioning so that the 
+   form appears like a window.
+
+   (Hints: to test your HTML, you can upload to Mutilidae and then get
+           the application to use it via a ".../index.php?page=/path/to/file" URL;
+           If you don't want to write the HTML, you can find a workable form
+           in the html-form.txt file)
+
+2. We need a JavaScript function for the form to call.  It needs to accept
+   the HTML FORM as a parameter, extract the username and password values
+   and then POST these off to a URL to save them.  
+
+   Mutillidae provides a page to save credentials at:
+      http://your.ip.addr:port/index.php?page=capture-data.php
+
+   The JavaScript needs to be wrapped in a SCRIPT tag and called
+   from the HTML form you developed in step 1.  Before using it with the form
+   you can test it by itself by wrapping it in a SCRIPT tag and a very simple
+   HTML element to call it (like a button's onClick handler).
+
+   (Hints: Use XMLHttpRequest() to send the data to the URL so the user
+           doesn't know it's happening;
+           Once the call completes you also need to hide the form (which is 
+           done using the onReadyStateChange callback of the XMLHttpRequest's
+           request object - hide the form when the readyState is 4);
+           If you don't want to worry about all this messing around with 
+           JavaScript ninjary there is a working function in 
+           form-proc-function.txt)
+
+3. Try this out by HTML injecting it somewhere using a simple "reflected"
+   attack (i.e. where you insert it into the page yourself and it is
+   displayed back to you).  The DNS Lookup page works well for this.  Look
+   at the page structure ... what do you need to enter into the hostname
+   field to get your HTML block inserted into the page?
+
+   Use the "Captured Data" link in the header to view the captured data
+   page where any data POSTed to the capture-data.php page is displayed.
+
+   (Hint: the <div> structure of the HTML is important to making the injected
+          HTML work smoothly and put your SCRIPT tag inside the DIV where
+          your FORM is for simplicity)
+
+At this point if you have data arriving at the capture-data.php page successfully you have a working proof-of-concept attack!
+
+Let's see how we could use this in a persistent XSS attack to snare an
+unwary user.
+
+4. Return to the "Add to your Blog" page.  Enter some text to create a new
+   post to see the page working.  Now enter another blog post but add the
+   text <script>alert("JavaScript runs!");</script> somewhere in your post.
+
+   When you submit the post, the alert popup will appear.  However it is now
+   in the database too.  Navigate to the "View Blogs" page (linked from the
+   top left of the Add to my Blog page).  Select your blog ... see how the
+   JavaScript runs again!
+
+   Now to get rid of this JS, select "Reset DB" in the top menu.  That should
+   recreate the database and remove that entry.
+
+   Now, use this approach to embed your login form into a blog post on your own
+   blog.
+
+5. Putting something on your own blog is all very well, but it's a bit obvious
+   and people may not read your blog.  We need to put it somewhere more
+   prominent.
+
+   Use the technique from Exercise 3 to impersonate the user "Tim" who happens
+   to be a very important manager in our organisation.  Everyone will read his
+   blog if there is an important entry on it.
+
+   Check that when the page is visited then the login form is appearing and
+   credentials are being written to the capture-data.php page.
+
+
+If you have got this far, well done, you now have a very credible credential
+stealing attack against the application.
+
+

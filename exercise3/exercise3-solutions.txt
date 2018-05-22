@@ -1,0 +1,34 @@
+Exercise 3 Solutions
+====================
+
+You will probably have realised that the key to this attack is to tampler with
+the headers being sent to the server as they are not secured in any way.
+
+1. Navigate to the "Add to Your Blog" page and check that your username is shown
+   at the top right hand side of the page.  Add an entry.
+
+2. Switch on interception in the BurpSuite Proxy and load the "Add to your Blog"
+   page again.  Note that there are cookies for the PHPSESSID, the uid and the
+   username.
+
+   If you change the username cookie and resubmit the page, you will see that the
+   user (displayed in the page header) doesn't change.  However if you supply 
+   another user ID then the user does change.
+
+   You need to extract the user ID from the "accounts" table using an SQL 
+   injection attack to make this work.
+
+   The injection text you need is something like:
+
+      ' UNION select null, concat(cid, '=', username), null, null, null, null, null FROM accounts
+
+   Enter this into the "username" field on the User Info page and save the result.
+   Use the CID value to impersonate a new user.
+
+3. To post to that user's blog, switch on interception in the proxy and create a 
+   blog post.  In BurpSuite, edit the "uid" cookie to be the correct number for
+   the user you are interested in (Tim's UID is 18) and then forward on the
+   request.
+
+   The blog entry should appear in that user's blog.
+   

